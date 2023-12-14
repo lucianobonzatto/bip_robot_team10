@@ -14,6 +14,8 @@ import math
 from utils import *
 from definitions import *
 
+frequency = 15000  # PWM frequency
+
 # Initializing peripherals, variables and pins:
 #######################################################
 # ## To use the L9110 motor driver, uncomment this part
@@ -31,7 +33,6 @@ right_motor.stop()
 
 # uart = UART(2, baudrate=115200, tx=TX, rx=RX)
 led_board = Pin(BOARD_LED, Pin.OUT)				# Define ESP32 onboard LED
-frequency = 15000  # PWM frequency
 cycle_count = 0
 delta_t = DELTA_T_ms / 1000
 
