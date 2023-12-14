@@ -33,3 +33,7 @@ PASS = "BIPRAFL23"
 # Serial pins
 TX = 10     # UART-TX pin
 RX = 9      # UART-RX pin
+
+# Robot Size
+Wheel_Radius = 0.0205
+Whell_Distance = 0.0565

@@ -1,8 +1,10 @@
 from PID_class import PID
 import numpy as np
+from utils import *
+from definitions import *
 
 class My_Robot:
-    def __init__(self, ground_sensors, left_motor, right_motor, encoders, delta_t, whell_size, whell_distance):
+    def __init__(self, ground_sensors, left_motor, right_motor, encoders):
 
         # actuators
         self.left_motor = left_motor
@@ -16,15 +18,15 @@ class My_Robot:
         self.old_encoders_values = [None, None]
 
         # robot information
-        self.delta_t = delta_t
-        self.whell_size = whell_size
-        self.whell_distance = 2
+        self.delta_t = DELTA_T_ms / 1000
+        self.whell_size = Wheel_Radius
+        self.whell_distance = Whell_Distance
         self.odometry_position = [0.0, 0.0, 0.0]
         # self.pulses_per_turn = 100
 
         # controllers
-        self.linear_controller = PID(0.1, 0.01, 0.01, delta_t, 0.12)
-        self.angular_controller = PID(0.1, 0.01, 0.01, delta_t, 0.01)
+        self.linear_controller = PID(0.1, 0.01, 0.01, self.delta_t, 0.12)
+        self.angular_controller = PID(0.1, 0.01, 0.01, self.delta_t, 0.01)
 
         self.goto = [[0.1, 0.0], [0.1, 0.1]]
         self.index = 0
@@ -44,23 +46,24 @@ class My_Robot:
     
     def action(self):
         # line follow
-        gs_right = self.ground_sensors[2].getValue()
-        gs_center = self.ground_sensors[1].getValue()
-        gs_left = self.ground_sensors[1].getValue()
-        print(gs_left, gs_center, gs_right)
+        line_sensor_values = readIRSensors(self.ground_sensors)
+        # gs_right = self.ground_sensors[2].getValue()
+        # gs_center = self.ground_sensors[1].getValue()
+        # gs_left = self.ground_sensors[1].getValue()
+        # print(gs_left, gs_center, gs_right)
 
-        if(gs_left < 700):
-            self.left_motor.setVelocity(1)
-            self.right_motor.setVelocity(2)
-        elif(gs_right < 700):
-            self.left_motor.setVelocity(2)
-            self.right_motor.setVelocity(1)
-        elif(gs_center < 700):
-            self.left_motor.setVelocity(2)
-            self.right_motor.setVelocity(2)
-        else:
-            self.left_motor.setVelocity(0)
-            self.right_motor.setVelocity(0)
+        # if(gs_left < 700):
+        #     self.left_motor.setVelocity(1)
+        #     self.right_motor.setVelocity(2)
+        # elif(gs_right < 700):
+        #     self.left_motor.setVelocity(2)
+        #     self.right_motor.setVelocity(1)
+        # elif(gs_center < 700):
+        #     self.left_motor.setVelocity(2)
+        #     self.right_motor.setVelocity(2)
+        # else:
+        #     self.left_motor.setVelocity(0)
+        #     self.right_motor.setVelocity(0)
 
         # # PID
         # wl = 0
