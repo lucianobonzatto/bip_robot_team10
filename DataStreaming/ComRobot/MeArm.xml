@@ -22,7 +22,7 @@
     <cell r="3" c="5" text="2300" write_channel="s3" trigger_row="3" trigger_col="1" default_write="1500" default_trigger_row="3" default_trigger_col="6"/>
     <cell r="3" c="1" text="[Set]"/>
     <cell r="3" c="6" text="[Default]"/>
-    <cell r="5" c="6" text="277" read_channel="A1" charted="1" series_color="clRed"/>
+    <cell r="5" c="6" text="311" read_channel="A1" charted="1" series_color="clRed"/>
     <cell r="5" c="7" text="100" read_channel="A2" charted="1" series_color="clBlue"/>
   </cells>
 </sheet>
