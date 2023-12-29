@@ -1,11 +1,7 @@
+from files.WiFiInterface import WiFiInterface
+from files.definitions import *
 from machine import Pin, ADC
 import time
-from files.WiFiInterface import WiFiInterface
-
-wifi_ssid = "Vodafone-D25918"
-wifi_password = "s98S4c8kqn"
-server_ip = "192.168.1.134"
-server_port = 4224
 
 wifi_interface = WiFiInterface(wifi_ssid, wifi_password, server_ip, server_port)
 wifi_interface.run()

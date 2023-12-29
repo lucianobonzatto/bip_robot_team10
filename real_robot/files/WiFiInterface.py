@@ -1,4 +1,5 @@
 from machine import Pin
+from files.definitions import *
 import network
 import socket
 import time
@@ -11,7 +12,7 @@ class WiFiInterface:
         self.server_port = server_port
         self.wifi = None
         self.sock = None
-        self.led = Pin(2, Pin.OUT)
+        self.led = Pin(BOARD_LED, Pin.OUT)
 
     def connect_to_wifi(self):
         self.wifi = network.WLAN(network.STA_IF)

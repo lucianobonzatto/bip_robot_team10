@@ -1,5 +1,4 @@
 # This file contains definitions of pins and constants used in your code
-
 BOARD_LED = 2    # ESP32 onboard LED
 
 # Encoders: supply GND and 3V3
@@ -27,8 +26,10 @@ IR4 = 36    # Green  IR4 IO36
 IR5 = 34    # White  IR5 IO34
 
 # Network credentials - Replace by the correct ones!
-SSID = "BIPRAFL"
-PASS = "BIPRAFL23"
+wifi_ssid = "Vodafone-D25918"
+wifi_password = "s98S4c8kqn"
+server_ip = "192.168.1.134"
+server_port = 4224
 
 # Serial pins
 TX = 10     # UART-TX pin
