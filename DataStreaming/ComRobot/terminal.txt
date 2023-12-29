@@ -1,0 +1,22 @@
+ssid BDWireless;
+pass xxxxxxxx;
+wi;
+save;
+
+Up: begin
+Up: end
+Up: begin
+Up: begin
+Up: end
+Up: begin
+Up: end
+Up: begin
+Up: end
+Up: begin
+Up: end
+Up: begin
+Up: end
+Up: begin
+Up: end
+Up: begin
+Up: end

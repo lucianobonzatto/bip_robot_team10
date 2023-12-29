@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sheet>
+  <columns>
+    <defaultcol width="50"/>
+    <col num="4" width="56"/>
+    <col num="11" width="55"/>
+  </columns>
+  <cells>
+    <cell r="2" c="1" text="Pulse"/>
+    <cell r="1" c="1" text="Servo"/>
+    <cell r="1" c="2" text="0"/>
+    <cell r="1" c="3" text="1"/>
+    <cell r="1" c="4" text="2"/>
+    <cell r="1" c="5" text="3"/>
+    <cell r="2" c="5" text="1500" read_channel="s3"/>
+    <cell r="2" c="4" text="1500" read_channel="s2"/>
+    <cell r="2" c="3" text="1500" read_channel="s1"/>
+    <cell r="2" c="2" text="1500" read_channel="s0"/>
+    <cell r="3" c="2" text="1000" write_channel="s0" trigger_row="3" trigger_col="1" default_write="1500" default_trigger_row="3" default_trigger_col="6"/>
+    <cell r="3" c="3" text="1100" write_channel="s1" trigger_row="3" trigger_col="1" default_write="1500" default_trigger_row="3" default_trigger_col="6"/>
+    <cell r="3" c="4" text="1700" write_channel="s2" trigger_row="3" trigger_col="1" default_write="1500" default_trigger_row="3" default_trigger_col="6"/>
+    <cell r="3" c="5" text="2300" write_channel="s3" trigger_row="3" trigger_col="1" default_write="1500" default_trigger_row="3" default_trigger_col="6"/>
+    <cell r="3" c="1" text="[Set]"/>
+    <cell r="3" c="6" text="[Default]"/>
+    <cell r="5" c="6" text="277" read_channel="A1" charted="1" series_color="clRed"/>
+    <cell r="5" c="7" text="100" read_channel="A2" charted="1" series_color="clBlue"/>
+  </cells>
+</sheet>
