@@ -1,7 +1,7 @@
-from PID_class import PID
+from real_robot.files.PID_class import PID
 import numpy as np
-from utils import *
-from definitions import *
+from real_robot.files.utils import *
+from real_robot.files.definitions import *
 
 class My_Robot:
     def __init__(self, ground_sensors, left_motor, right_motor, encoders):

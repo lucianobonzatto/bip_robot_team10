@@ -7,20 +7,20 @@
 
 from machine import Pin, PWM, UART, ADC, Timer
 from time import sleep
-from rotary_irq_esp import RotaryIRQ
-from robot import My_Robot
+from real_robot.files.rotary_irq_esp import RotaryIRQ
+from real_robot.files.robot import My_Robot
 import math
 
 # Import other functions and definitions used in this code:
-from utils import *
-from definitions import *
+from real_robot.files.utils import *
+from real_robot.files.definitions import *
 
 frequency = 15000  # PWM frequency
 
 # Initializing peripherals, variables and pins:
 #######################################################
 # ## To use the L9110 motor driver, uncomment this part
-from dcmotor import L9110 as DCMotor
+from real_robot.files.dcmotor import L9110 as DCMotor
 pinA1A = PWM(Pin(ML_A), frequency)
 pinA1B = PWM(Pin(ML_B), frequency)
 pinB1A = PWM(Pin(MR_A), frequency)
