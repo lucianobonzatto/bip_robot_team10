@@ -41,7 +41,7 @@ class My_Robot:
             self.old_encoders_values = encoderValues
 
         # calc odometry
-        self.update_position(encoderValues)
+        self._update_position(encoderValues)
         self.old_encoders_values = encoderValues
 
         # print(self.old_encoders_values[0], self.old_encoders_values[1])
@@ -91,7 +91,7 @@ class My_Robot:
         # self.left_motor.setVelocity(wl)
         # self.right_motor.setVelocity(wr)
 
-    def update_position(self, encoderValues):
+    def _update_position(self, encoderValues):
         wl, wr = self._cal_actual_wheels_speed(encoderValues)
         # print(f'Left wheel speed  = {wl} rad/s.')
         # print(f'Right wheel speed = {wr} rad/s.')
@@ -108,6 +108,14 @@ class My_Robot:
         wr = (encoderValues[1] - self.old_encoders_values[1])/self.delta_t
         return wl, wr
     
+        ## Calculate the change in angular position of the wheels:
+        #ang_diff_l = 2*math.pi*(encoderValues[0] - oldEncoderValues[0])/pulses_per_turn
+        #ang_diff_r = 2*math.pi*(encoderValues[1] - oldEncoderValues[1])/pulses_per_turn
+        ## Calculate the angular speeds:
+        #wl = ang_diff_l/delta_t
+        #wr = ang_diff_r/delta_t
+        #return wl, wr
+    
     def _calc_actual_speeds(self, wl, wr):
         u = self.whell_size/2.0 * (wr + wl)
         w = self.whell_size/self.whell_distance * (wr - wl)
@@ -116,10 +124,10 @@ class My_Robot:
     def _update_actual_odometry(self, u, w):
         delta_phi = w * self.delta_t
         phi = self.odometry_position[2] + delta_phi
-        if phi >= np.pi:
-            phi = phi - 2*np.pi
-        elif phi < -np.pi:
-            phi = phi + 2*np.pi
+        if phi >= math.pi:
+            phi = phi - 2*math.pi
+        elif phi < -math.pi:
+            phi = phi + 2*math.pi
 
         delta_x = u * np.cos(phi) * self.delta_t
         delta_y = u * np.sin(phi) * self.delta_t
@@ -133,15 +141,3 @@ class My_Robot:
         wr = (u/self.whell_size) + (w*self.whell_distance)/(2*self.whell_size)
         wl = (u/self.whell_size) - (w*self.whell_distance)/(2*self.whell_size)
         return wr, wl
-
-# ========================================= REAL ROBOT =========================================
-#     def get_wheels_speed(encoderValues, oldEncoderValues, pulses_per_turn, delta_t):
-#         # Calculate the change in angular position of the wheels:
-#         ang_diff_l = 2*np.pi*(encoderValues[0] - oldEncoderValues[0])/pulses_per_turn
-#         ang_diff_r = 2*np.pi*(encoderValues[1] - oldEncoderValues[1])/pulses_per_turn
-
-#         # Calculate the angular speeds:
-#         wl = ang_diff_l/delta_t
-#         wr = ang_diff_r/delta_t
-
-#         return wl, wr
