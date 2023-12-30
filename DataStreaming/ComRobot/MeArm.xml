@@ -2,8 +2,9 @@
 <sheet>
   <columns>
     <defaultcol width="50"/>
+    <col num="1" width="86"/>
     <col num="4" width="56"/>
-    <col num="11" width="55"/>
+    <col num="11" width="71"/>
   </columns>
   <cells>
     <cell r="2" c="1" text="Pulse"/>
@@ -22,7 +23,33 @@
     <cell r="3" c="5" text="2300" write_channel="s3" trigger_row="3" trigger_col="1" default_write="1500" default_trigger_row="3" default_trigger_col="6"/>
     <cell r="3" c="1" text="[Set]"/>
     <cell r="3" c="6" text="[Default]"/>
-    <cell r="5" c="6" text="911" read_channel="A1" charted="1" series_color="clRed"/>
-    <cell r="5" c="7" text="100" read_channel="A2" charted="1" series_color="clBlue"/>
+    <cell r="7" c="1" text="wheels speed"/>
+    <cell r="8" c="1" text="left"/>
+    <cell r="9" c="1" text="right"/>
+    <cell r="8" c="2" text="0" read_channel="W1"/>
+    <cell r="9" c="2" text="0" read_channel="W2"/>
+    <cell r="11" c="1" text="robot speed"/>
+    <cell r="12" c="1" text="linear"/>
+    <cell r="13" c="1" text="angular"/>
+    <cell r="12" c="2" text="0" read_channel="V1"/>
+    <cell r="13" c="2" text="0" read_channel="V2"/>
+    <cell r="15" c="1" text="odometry"/>
+    <cell r="16" c="1" text="x"/>
+    <cell r="17" c="1" text="y"/>
+    <cell r="18" c="1" text="yaw"/>
+    <cell r="16" c="2" text="0" read_channel="O1"/>
+    <cell r="17" c="2" text="0" read_channel="O2"/>
+    <cell r="18" c="2" text="0" read_channel="O3"/>
+    <cell r="1" c="11" text="cycle_count"/>
+    <cell r="2" c="11" text="1205" read_channel="A1" series_color="clRed"/>
+    <cell r="20" c="1" text="encoder"/>
+    <cell r="21" c="1" text="left"/>
+    <cell r="22" c="1" text="right"/>
+    <cell r="22" c="2" text="0" read_channel="E1"/>
+    <cell r="23" c="1" text="old left"/>
+    <cell r="23" c="2" text="0" read_channel="E4"/>
+    <cell r="24" c="1" text="old right"/>
+    <cell r="24" c="2" text="0" read_channel="E3"/>
+    <cell r="21" c="2" text="0" read_channel="E2"/>
   </cells>
 </sheet>

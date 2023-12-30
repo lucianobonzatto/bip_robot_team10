@@ -36,16 +36,22 @@ class My_Robot:
 
     def update(self):
         # read sensors
-        encoderValues = [self.encoders[0].getValue(), self.encoders[1].getValue()]
+        encoderValues = [self.encoders[0].value(), self.encoders[1].value()]
         if(self.old_encoders_values[0] == None or self.old_encoders_values[1] == None):
             self.old_encoders_values = encoderValues
+        
+        data = "E1 " + str(encoderValues[0]) + ";" + \
+            "E2 " + str(encoderValues[1]) + ";" + \
+            "E3 " + str(self.old_encoders_values[0]) + ";" + \
+            "E4 " + str(self.old_encoders_values[1]) + ";"
 
         # calc odometry
-        self._update_position(encoderValues)
+        data = data + self._update_position(encoderValues)
         self.old_encoders_values = encoderValues
 
         # print(self.old_encoders_values[0], self.old_encoders_values[1])
         # print(encoderValues[0], encoderValues[1])
+        return data
     
     def action(self):
         # line follow
@@ -168,7 +174,16 @@ class My_Robot:
         # print(f"Robot angular speed = {w} rad/s")
 
         self._update_actual_odometry(u, w)
-        print(f"Robot pose is: {self.odometry_position[0]} m, {self.odometry_position[1]} m, {self.odometry_position[2]} rad.")
+        # print(f"Robot pose is: {self.odometry_position[0]} m, {self.odometry_position[1]} m, {self.odometry_position[2]} rad.")
+        data = "W1 " + str(wl) + ";" + \
+            "W2 " + str(wr) + ";" + \
+            "V1 " + str(u) + ";" + \
+            "V2 " + str(w) + ";" + \
+            "O1 " + str(self.odometry_position[0]) + ";" + \
+            "O2 " + str(self.odometry_position[1]) + ";" + \
+            "O3 " + str(self.odometry_position[2]) + ";"
+        
+        return data
 
     def _cal_actual_wheels_speed(self, encoderValues):
         wl = (encoderValues[0] - self.old_encoders_values[0])/self.delta_t
@@ -196,8 +211,8 @@ class My_Robot:
         elif phi < -math.pi:
             phi = phi + 2*math.pi
 
-        delta_x = u * np.cos(phi) * self.delta_t
-        delta_y = u * np.sin(phi) * self.delta_t
+        delta_x = u * math.cos(phi) * self.delta_t
+        delta_y = u * math.sin(phi) * self.delta_t
 
         self.odometry_position[0] = self.odometry_position[0] + delta_x
         self.odometry_position[1] = self.odometry_position[1] + delta_y
