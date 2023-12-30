@@ -9,7 +9,7 @@
 #   https://github.com/MikeTeachman/micropython-rotary
 
 from machine import Pin
-from real_robot.files.rotary import Rotary
+from files.rotary import Rotary
 from sys import platform
 
 _esp8266_deny_pins = [16]
