@@ -49,7 +49,7 @@ class My_Robot:
     
     def action(self):
         # line follow
-        line_sensor_values = readIRSensors(self.ground_sensors)
+        line_sensor_values = self.readIRSensors()
         # gs_right = self.ground_sensors[2].getValue()
         # gs_center = self.ground_sensors[1].getValue()
         # gs_left = self.ground_sensors[1].getValue()
@@ -91,6 +91,73 @@ class My_Robot:
         # self.left_motor.setVelocity(wl)
         # self.right_motor.setVelocity(wr)
 
+    def readSwitch(self):
+        '''
+        Read the Switch state:
+        pressed = True; unpressed = False
+        '''
+        return not self.touchsw.value()
+
+    def readIRSensors(self):
+        '''
+        Read the IR sensors using the AD converter and return a list with inverted values:
+        white = 1; 4096 = black
+        '''
+        return [4096 - value.read() for value in self.ground_sensors]
+    
+    def readSolenoid(self):
+        '''
+        Read the solenoid state:
+        on = True; off = False
+        '''
+        return self.solenoid_state
+    
+    def writeSolenoid(self, state):
+        if state == True:
+            self.solenoid.duty(255)	# Turn on magnet solenoid
+            self.solenoid_state = True
+            
+        elif state == False:
+            self.solenoid.duty(0)	# Turn off magnet solenoid
+            self.solenoid_state = False
+    
+    def test_motors(self):
+        '''
+        Sequence of movements to test the motors at different speeds and directions.
+        '''
+        print("Left motor")
+        print(self.encoders[0].getValue(), self.encoders[1].getValue())
+        self.left_motor.forward(60)
+        sleep(1)
+        self.left_motor.stop()
+        print(self.encoders[0].getValue(), self.encoders[1].getValue())
+
+        sleep(1)
+        print(self.encoders[0].getValue(), self.encoders[1].getValue())
+        self.left_motor.backwards(90)
+        sleep(1)
+        self.left_motor.stop()
+        print(self.encoders[0].getValue(), self.encoders[1].getValue())
+
+        sleep(2)
+
+        print("Right motor")
+        print(self.encoders[0].getValue(), self.encoders[1].getValue())
+        self.right_motor.forward(60)
+        sleep(1)
+        self.right_motor.stop()
+        print(self.encoders[0].getValue(), self.encoders[1].getValue())
+
+        sleep(1)
+        print(self.encoders[0].getValue(), self.encoders[1].getValue())
+        self.right_motor.backwards(90)
+        sleep(1)
+        self.right_motor.stop()
+        print(self.encoders[0].getValue(), self.encoders[1].getValue())
+
+        sleep(2)
+        print(self.encoders[0].getValue(), self.encoders[1].getValue())
+    
     def _update_position(self, encoderValues):
         wl, wr = self._cal_actual_wheels_speed(encoderValues)
         # print(f'Left wheel speed  = {wl} rad/s.')
