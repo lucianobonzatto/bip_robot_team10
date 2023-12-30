@@ -1,16 +1,19 @@
-from real_robot.files.PID_class import PID
-import numpy as np
-from real_robot.files.utils import *
-from real_robot.files.definitions import *
+from files.definitions import *
+from files.PID_class import PID
+from time import sleep
+import math
 
 class My_Robot:
-    def __init__(self, ground_sensors, left_motor, right_motor, encoders):
-
+    def __init__(self, ground_sensors, left_motor, right_motor, encoders, touchsw, solenoid):
         # actuators
         self.left_motor = left_motor
         self.right_motor = right_motor
+        self.solenoid = solenoid
+        self.solenoid.duty(0)
+        self.solenoid_state = False
 
         # sensors
+        self.touchsw = touchsw
         self.ground_sensors = ground_sensors
         self.encoders = encoders
 
@@ -22,7 +25,7 @@ class My_Robot:
         self.whell_size = Wheel_Radius
         self.whell_distance = Whell_Distance
         self.odometry_position = [0.0, 0.0, 0.0]
-        # self.pulses_per_turn = 100
+        self.pulses_per_turn = PULSES_PER_TURN
 
         # controllers
         self.linear_controller = PID(0.1, 0.01, 0.01, self.delta_t, 0.12)
