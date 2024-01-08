@@ -23,13 +23,26 @@ delta_t = DELTA_T_ms / 1000
 #######################################################
 
 ## L9110 motor driver
-from files.dcmotor import L9110 as DCMotor
-pinA1A = PWM(Pin(ML_A), frequency)
-pinA1B = PWM(Pin(ML_B), frequency)
-pinB1A = PWM(Pin(MR_A), frequency)
-pinB1B = PWM(Pin(MR_B), frequency)
-left_motor = DCMotor(pinA1A, pinA1B, 0, 1023)
-right_motor = DCMotor(pinB1A, pinB1B, 0, 1023)
+# from files.dcmotor import L9110 as DCMotor
+# pinA1A = PWM(Pin(ML_A), frequency)
+# pinA1B = PWM(Pin(ML_B), frequency)
+# pinB1A = PWM(Pin(MR_A), frequency)
+# pinB1B = PWM(Pin(MR_B), frequency)
+# left_motor = DCMotor(pinA1A, pinA1B, 0, 1023)
+# right_motor = DCMotor(pinB1A, pinB1B, 0, 1023)
+
+#######################################################
+## L298 motor driver
+
+from files.dcmotor import L298 as DCMotor
+pin1 = Pin(21, Pin.OUT)
+pin2 = Pin(4, Pin.OUT)
+enable = PWM(Pin(22), frequency)
+enable2 = PWM(Pin(23), frequency)
+left_motor = DCMotor(pin1, pin2, enable, 0, 1023)
+right_motor = DCMotor(pin1, pin2, enable2, 0, 1023)
+#######################################################
+
 left_motor.stop()
 right_motor.stop()
 
