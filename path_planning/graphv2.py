@@ -3,32 +3,32 @@ from collections import deque
 class Graph:
     def __init__(self):
         self.graph = {
-            'A1': {'N1': 'baixo'},
-            'A2': {'N2': 'baixo'},
-            'A3': {'N3': 'baixo'},
-            'A4': {'N4': 'baixo'},
-            'B1': {'N15': 'cima'},
-            'B2': {'N16': 'cima'},
-            'B3': {'N17': 'cima'},
-            'B4': {'N18': 'cima'},
-            'N1': {'A1': 'cima', 'N2': 'direita', 'N7': 'baixo'},
-            'N2': {'A2': 'cima', 'N3': 'direita', 'N1': 'esquerda'},
-            'N3': {'A3': 'cima', 'N4': 'direita', 'N2': 'esquerda'},
-            'N4': {'A4': 'cima', 'N5': 'direita', 'N3': 'esquerda'},
-            'N5': {'N4': 'esquerda', 'N6': 'direita', 'N8': 'baixo'},
-            'N6': {'N5': 'esquerda', 'N9': 'baixo'},
-            'N7': {'N1': 'cima', 'N8': 'direita', 'N10': 'baixo'},
-            'N8': {'N7': 'esquerda', 'N5': 'cima', 'N9': 'direita', 'N11': 'baixo'},
-            'N9': {'N6': 'cima', 'N8': 'esquerda', 'N12': 'baixo'},
-            'N10': {'N7': 'cima', 'N11': 'direita', 'N13': 'baixo'},
-            'N11': {'N8': 'cima', 'N10': 'esquerda', 'N12': 'direita', 'N14': 'baixo'},
-            'N12': {'N9': 'cima', 'N11': 'esquerda', 'N18': 'baixo'},
-            'N13': {'N10': 'cima', 'N14': 'direita'},
-            'N14': {'N11': 'cima', 'N13': 'esquerda', 'N15': 'direita'},
-            'N15': {'N14': 'esquerda', 'B1': 'baixo', 'N16': 'direita'},
-            'N16': {'N15': 'esquerda', 'B2': 'baixo', 'N17': 'direita'},
-            'N17': {'N16': 'esquerda', 'B3': 'baixo', 'N18': 'direita'},
-            'N18': {'N17': 'esquerda', 'B4': 'baixo', 'N12': 'cima'},
+            'A1': {'N1': 'down'},
+            'A2': {'N2': 'down'},
+            'A3': {'N3': 'down'},
+            'A4': {'N4': 'down'},
+            'B1': {'N15': 'up'},
+            'B2': {'N16': 'up'},
+            'B3': {'N17': 'up'},
+            'B4': {'N18': 'up'},
+            'N1': {'A1': 'up', 'N2': 'right', 'N7': 'down'},
+            'N2': {'A2': 'up', 'N3': 'right', 'N1': 'left'},
+            'N3': {'A3': 'up', 'N4': 'right', 'N2': 'left'},
+            'N4': {'A4': 'up', 'N5': 'right', 'N3': 'left'},
+            'N5': {'N4': 'left', 'N6': 'right', 'N8': 'down'},
+            'N6': {'N5': 'left', 'N9': 'down'},
+            'N7': {'N1': 'up', 'N8': 'right', 'N10': 'down'},
+            'N8': {'N7': 'left', 'N5': 'up', 'N9': 'right', 'N11': 'down'},
+            'N9': {'N6': 'up', 'N8': 'left', 'N12': 'down'},
+            'N10': {'N7': 'up', 'N11': 'right', 'N13': 'down'},
+            'N11': {'N8': 'up', 'N10': 'left', 'N12': 'right', 'N14': 'down'},
+            'N12': {'N9': 'up', 'N11': 'left', 'N18': 'down'},
+            'N13': {'N10': 'up', 'N14': 'right'},
+            'N14': {'N11': 'up', 'N13': 'left', 'N15': 'right'},
+            'N15': {'N14': 'left', 'B1': 'down', 'N16': 'right'},
+            'N16': {'N15': 'left', 'B2': 'down', 'N17': 'right'},
+            'N17': {'N16': 'left', 'B3': 'down', 'N18': 'right'},
+            'N18': {'N17': 'left', 'B4': 'down', 'N12': 'up'},
         }
 
     def path_BFS(self, start, goal):
@@ -71,10 +71,10 @@ class Graph:
 graph_instance = Graph()
 print(graph_instance)
 
-path = graph_instance.path_BFS('B4', 'A4')
+path = graph_instance.path_BFS('B4', 'A3')
 print("Path:", path)
 
 
 for i in range(len(path) - 1):
     position = graph_instance.get_relative_position(path[i], path[i + 1])
-    print(f"De '{path[i]}' para '{path[i + 1]}': {position}")
+    print(f"'{path[i]}' to '{path[i + 1]}': {position}")
