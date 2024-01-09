@@ -11,6 +11,7 @@ from files.WiFiInterface import WiFiInterface
 from files.robot import My_Robot
 from files.definitions import *
 import time
+import math
 
 frequency = 15000  # PWM frequency
 # uart = UART(2, baudrate=115200, tx=TX, rx=RX)
@@ -98,8 +99,41 @@ my_robot = My_Robot(analog_pins, left_motor, right_motor, encoders, touchsw, sol
 #    if data != None:
 #        print("Dados Recebidos:", data)
 #    time.sleep_ms(100)
-    
+
+commands = [
+    ("followLine", None),
+    ("moveTo", [1, 0, 0]),
+    ("rotateTo", math.pi / 2)
+]
+   
 #######################################################
+
+def run_command():
+    global index
+    if (index >= len(commands)):
+        return True
+    
+    action, params = commands[index]
+
+    if action == "followLine":
+        return_value = my_robot.followLine()
+        if return_value:
+            index = index + 1
+
+    elif action == "moveTo":
+        return_value = my_robot.moveTo(params)
+        if return_value:
+            index = index + 1
+
+    elif action == "rotateTo":
+        return_value = my_robot.rotateTo(params)
+        if return_value:
+            index = index + 1
+            
+    return False
+
+#######################################################
+
 
 #print("Click the switch to start.")
 #while touchsw.value() == True:
@@ -108,7 +142,7 @@ my_robot = My_Robot(analog_pins, left_motor, right_motor, encoders, touchsw, sol
 
 print("Starting...")
 
-    
+index = 0
 while True:
     time.sleep(delta_t)
     cycle_count += 1
@@ -125,5 +159,12 @@ while True:
     print(data)
     
     # my_robot.test_motors()
-    my_robot.follow_line()
+    # my_robot.follow_line()
+    # my_robot.moveTo([1,0,0])
+    # my_robot.rotateTo(math.pi / 2)
+    if run_command():
+        break
+    
+    
+print("Stop")
     
