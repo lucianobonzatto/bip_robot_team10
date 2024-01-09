@@ -97,8 +97,10 @@ class My_Robot:
         # self.left_motor.setVelocity(wl)
         # self.right_motor.setVelocity(wr)
 
-    def send_velocity(self, u, w):
+    def sendVelocity(self, u, w):
         wr, wl = self._calc_wheels_speed_to(u, w)
+        wr = self._convert_speed_to_pwm(wr)
+        wl = self._convert_speed_to_pwm(wl)
         
         if wl > 0:
             self.left_motor.forward(abs(wl))
@@ -240,3 +242,12 @@ class My_Robot:
         wr = (u/self.whell_size) + (w*self.whell_distance)/(2*self.whell_size)
         wl = (u/self.whell_size) - (w*self.whell_distance)/(2*self.whell_size)
         return wr, wl
+
+    def _convert_speed_to_pwm(self, speed):
+        speed_min = -1
+        speed_max = 1
+
+        limited_speed = max(speed_min, min(speed_max, speed))
+
+        pwm_value = int(((limited_speed - speed_min) / (speed_max - speed_min)) * 1023)
+        return max(0, min(1023, pwm_value))
