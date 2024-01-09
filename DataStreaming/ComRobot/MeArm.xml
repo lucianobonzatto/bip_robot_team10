@@ -41,7 +41,7 @@
     <cell r="17" c="2" text="0" read_channel="O2"/>
     <cell r="18" c="2" text="0" read_channel="O3"/>
     <cell r="1" c="11" text="cycle_count"/>
-    <cell r="2" c="11" text="1205" read_channel="A1" series_color="clRed"/>
+    <cell r="2" c="11" text="689" read_channel="A1" series_color="clRed"/>
     <cell r="20" c="1" text="encoder"/>
     <cell r="21" c="1" text="left"/>
     <cell r="22" c="1" text="right"/>
