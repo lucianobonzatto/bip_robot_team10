@@ -52,36 +52,36 @@ class My_Robot:
         # print(self.old_encoders_values[0], self.old_encoders_values[1])
         # print(encoderValues[0], encoderValues[1])
         return data
-    
-    def action(self):
-        # line follow
+        
+    def followLine(self):
         line_sensor_values = self.readIRSensors()
-        # gs_right = self.ground_sensors[2].getValue()
-        # gs_center = self.ground_sensors[1].getValue()
-        # gs_left = self.ground_sensors[1].getValue()
-        # print(gs_left, gs_center, gs_right)
-
-        # if(gs_left < 700):
-        #     self.left_motor.setVelocity(1)
-        #     self.right_motor.setVelocity(2)
-        # elif(gs_right < 700):
-        #     self.left_motor.setVelocity(2)
-        #     self.right_motor.setVelocity(1)
-        # elif(gs_center < 700):
-        #     self.left_motor.setVelocity(2)
-        #     self.right_motor.setVelocity(2)
-        # else:
-        #     self.left_motor.setVelocity(0)
-        #     self.right_motor.setVelocity(0)
-
-        # # PID
-        # wl = 0
-        # wr = 0
-        # xd = self.goto[self.index][0]
-        # yd = self.goto[self.index][1]
-        # x_err = xd - self.odometry_position[0]
-        # y_err = yd - self.odometry_position[1]
-        # dist_err = np.sqrt(x_err**2 + y_err**2)
+        gs_extreme_left = line_sensor_values[0]
+        gs_right = line_sensor_values[1].getValue()
+        gs_center = line_sensor_values[2].getValue()
+        gs_left = line_sensor_values[3].getValue()
+        gs_extreme_right = line_sensor_values[4]
+        
+        base_speed = 0.5
+        turn_speed = 0.2
+        
+        if(gs_extreme_left > LINE_THRESHOLD and gs_extreme_right > LINE_THRESHOLD):
+            return True
+        
+        if gs_center > LINE_THRESHOLD:
+            u = base_speed
+            w = 0
+        elif gs_left > LINE_THRESHOLD:
+            u = base_speed
+            w = turn_speed
+        elif gs_right > LINE_THRESHOLD:
+            u = base_speed
+            w = -turn_speed
+        else:
+            u = 0
+            w = 0
+            
+        self.sendVelocity(u, w)
+        return False
         
         # phi_d = np.arctan2(y_err,x_err)
         # phi_err = phi_d - self.odometry_position[2]

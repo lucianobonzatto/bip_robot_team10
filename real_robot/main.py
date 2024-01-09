@@ -10,7 +10,6 @@ from files.rotary_irq_esp import RotaryIRQ
 from files.WiFiInterface import WiFiInterface
 from files.robot import My_Robot
 from files.definitions import *
-
 import time
 
 frequency = 15000  # PWM frequency
@@ -65,7 +64,6 @@ encoder_left = RotaryIRQ(pin_num_clk=ENC2_A,
               range_mode=RotaryIRQ.RANGE_WRAP)	# Left wheel encoder: 968 ppr
 encoders = [encoder_right, encoder_left]
 
-
 ## switch driver
 touchsw = Pin(TOUCHSW_pin, Pin.IN, Pin.PULL_UP)	# define touch switch pin with internal pull-up
 
@@ -110,35 +108,12 @@ my_robot = My_Robot(analog_pins, left_motor, right_motor, encoders, touchsw, sol
 
 print("Starting...")
 
-def follow_line(line_sensor_values):
-    gs_right = line_sensor_values[1].getValue()
-    gs_center = line_sensor_values[2].getValue()
-    gs_left = line_sensor_values[3].getValue()
     
-    base_speed = 0.5
-    turn_speed = 0.2
-    
-    if gs_center > LINE_THRESHOLD:
-        u = base_speed
-        w = 0
-    elif gs_left > LINE_THRESHOLD:
-        u = base_speed
-        w = turn_speed
-    elif gs_right > LINE_THRESHOLD:
-        u = base_speed
-        w = -turn_speed
-    else:
-        u = 0
-        w = 0
-    my_robot.send_velocity(u, w)
-    
-
 while True:
     time.sleep(delta_t)
     cycle_count += 1
     led_board.value(not led_board.value())
     data = my_robot.update()
-    
     data = data + "A1 " + str(cycle_count) + ";loop 1;"
     #wifi_interface.send_data(data.encode())
     
@@ -150,14 +125,5 @@ while True:
     print(data)
     
     # my_robot.test_motors()
-    line_sensor_values = my_robot.readIRSensors()
-    follow_line(line_sensor_values)
-    gs_extreme_left = line_sensor_values[0]
-    gs_extreme_right = line_sensor_values[4]
-    
-    if(gs_extreme_left < LINE_THRESHOLD and gs_extreme_right < LINE_THRESHOLD):
-        follow_line(line_sensor_values)
-    else:
-        my_robot.send_velocity(0, 0)
-    
+    my_robot.follow_line()
     
