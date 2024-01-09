@@ -85,7 +85,6 @@ analog_pins = [IR1_pin, IR2_pin, IR3_pin, IR4_pin, IR5_pin]
 
 ## solenoid driver
 solenoid = PWM(Pin(SOLENOID_PIN), frequency)	# define PWM for solenoid pin
-#solenoid.duty(1000)
 solenoid.duty(0)	# Turn off magnet solenoid
 
 #######################################################
@@ -108,15 +107,37 @@ my_robot = My_Robot(analog_pins, left_motor, right_motor, encoders, touchsw, sol
 #while touchsw.value() == True:
 #    # Switch value is False when clicked
 #    time.sleep(0.1)
-    
+
 print("Starting...")
+
+def follow_line(line_sensor_values):
+    gs_right = line_sensor_values[1].getValue()
+    gs_center = line_sensor_values[2].getValue()
+    gs_left = line_sensor_values[3].getValue()
+    
+    base_speed = 0.5
+    turn_speed = 0.2
+    
+    if gs_center > LINE_THRESHOLD:
+        u = base_speed
+        w = 0
+    elif gs_left > LINE_THRESHOLD:
+        u = base_speed
+        w = turn_speed
+    elif gs_right > LINE_THRESHOLD:
+        u = base_speed
+        w = -turn_speed
+    else:
+        u = 0
+        w = 0
+    my_robot.send_velocity(u, w)
+    
 
 while True:
     time.sleep(delta_t)
     cycle_count += 1
     led_board.value(not led_board.value())
     data = my_robot.update()
-    my_robot.test_motors()
     
     data = data + "A1 " + str(cycle_count) + ";loop 1;"
     #wifi_interface.send_data(data.encode())
@@ -127,5 +148,16 @@ while True:
     print(touch_sw_value)
     print(line_sensor_values)
     print(data)
+    
+    # my_robot.test_motors()
+    line_sensor_values = my_robot.readIRSensors()
+    follow_line(line_sensor_values)
+    gs_extreme_left = line_sensor_values[0]
+    gs_extreme_right = line_sensor_values[4]
+    
+    if(gs_extreme_left < LINE_THRESHOLD and gs_extreme_right < LINE_THRESHOLD):
+        follow_line(line_sensor_values)
+    else:
+        my_robot.send_velocity(0, 0)
     
     

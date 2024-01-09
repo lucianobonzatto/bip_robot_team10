@@ -29,6 +29,8 @@ IR3 = 39    # Orange IR3 IO39
 IR4 = 36    # Green  IR4 IO36
 IR5 = 34    # White  IR5 IO34
 
+LINE_THRESHOLD = 100
+
 # Network credentials - Replace by the correct ones!
 wifi_ssid = "Vodafone-D25918"
 wifi_password = "s98S4c8kqn"
