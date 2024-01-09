@@ -103,13 +103,18 @@ my_robot = My_Robot(analog_pins, left_motor, right_motor, encoders, touchsw, sol
 commands = [
     ("followLine", None),
     ("moveTo", [1, 0, 0]),
-    ("rotateTo", math.pi / 2)
+    ("rotateTo", math.pi / 2),
+    ("moveToRelative", [0.1, 0, 0]),
+    ("rotateToRelative", math.pi / 4),
 ]
    
 #######################################################
 
 def run_command():
     global index
+    global move_to_relative_initialized, move_to_relative_target
+    global rotate_to_relative_initialized, rotate_to_relative_target
+    
     if (index >= len(commands)):
         return True
     
@@ -129,6 +134,35 @@ def run_command():
         return_value = my_robot.rotateTo(params)
         if return_value:
             index = index + 1
+    
+    elif action == "moveToRelative":
+        if not move_to_relative_initialized:
+            current_position = my_robot.odometry_position
+            current_angle = current_position[2]
+
+            delta_x = params[0] * math.cos(current_angle) - params[1] * math.sin(current_angle)
+            delta_y = params[0] * math.sin(current_angle) + params[1] * math.cos(current_angle)
+
+            move_to_relative_target = [current_position[0] + delta_x, current_position[1] + delta_y, current_angle]
+            move_to_relative_initialized = True
+
+        return_value = my_robot.moveTo(move_to_relative_target)
+        if return_value:
+            index += 1
+            move_to_relative_initialized = False
+    
+    elif action == "rotateToRelative":
+        if not rotate_to_relative_initialized:
+            current_angle = my_robot.odometry_position[2]
+            rotate_to_relative_target = current_angle + params
+            
+            rotate_to_relative_target = (rotate_to_relative_target + math.pi) % (2 * math.pi) - math.pi
+            rotate_to_relative_initialized = True
+
+        return_value = my_robot.rotateTo(rotate_to_relative_target)
+        if return_value:
+            index += 1
+            rotate_to_relative_initialized = False  # Reset para o próximo uso
             
     return False
 
@@ -143,6 +177,11 @@ def run_command():
 print("Starting...")
 
 index = 0
+move_to_relative_initialized = False
+move_to_relative_target = [0, 0, 0]
+rotate_to_relative_initialized = False
+rotate_to_relative_target = 0
+
 while True:
     time.sleep(delta_t)
     cycle_count += 1
