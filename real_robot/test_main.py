@@ -118,6 +118,7 @@ while True:
     cycle_count += 1
     led_board.value(not led_board.value())
     data = my_robot.update()
+    my_robot.test_motors()
     
     data = data + "A1 " + str(cycle_count) + ";loop 1;"
     #wifi_interface.send_data(data.encode())

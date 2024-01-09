@@ -186,17 +186,17 @@ class My_Robot:
         return data
 
     def _cal_actual_wheels_speed(self, encoderValues):
-        wl = (encoderValues[0] - self.old_encoders_values[0])/self.delta_t
-        wr = (encoderValues[1] - self.old_encoders_values[1])/self.delta_t
-        return wl, wr
+    #    wl = (encoderValues[0] - self.old_encoders_values[0])/self.delta_t
+    #    wr = (encoderValues[1] - self.old_encoders_values[1])/self.delta_t
+    #    return wl, wr
     
         ## Calculate the change in angular position of the wheels:
-        #ang_diff_l = 2*math.pi*(encoderValues[0] - oldEncoderValues[0])/pulses_per_turn
-        #ang_diff_r = 2*math.pi*(encoderValues[1] - oldEncoderValues[1])/pulses_per_turn
+        ang_diff_l = 2*math.pi*(encoderValues[0] - self.old_encoders_values[0])/self.pulses_per_turn
+        ang_diff_r = 2*math.pi*(encoderValues[1] - self.old_encoders_values[1])/self.pulses_per_turn
         ## Calculate the angular speeds:
-        #wl = ang_diff_l/delta_t
-        #wr = ang_diff_r/delta_t
-        #return wl, wr
+        wl = ang_diff_l/self.delta_t
+        wr = ang_diff_r/self.delta_t
+        return wl, wr
     
     def _calc_actual_speeds(self, wl, wr):
         u = self.whell_size/2.0 * (wr + wl)
