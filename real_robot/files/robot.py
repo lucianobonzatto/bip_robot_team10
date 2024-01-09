@@ -97,6 +97,23 @@ class My_Robot:
         # self.left_motor.setVelocity(wl)
         # self.right_motor.setVelocity(wr)
 
+    def send_velocity(self, u, w):
+        wr, wl = self._calc_wheels_speed_to(u, w)
+        
+        if wl > 0:
+            self.left_motor.forward(abs(wl))
+        elif wl < 0:
+            self.left_motor.backwards(abs(wl))
+        else:
+            self.left_motor.stop()
+            
+        if wr > 0:
+            self.right_motor.forward(abs(wr))
+        elif wr < 0:
+            self.right_motor.backwards(abs(wr))
+        else:
+            self.right_motor.stop()
+        
     def readSwitch(self):
         '''
         Read the Switch state:
