@@ -19,6 +19,8 @@ class My_Robot:
 
         # values
         self.old_encoders_values = [None, None]
+        self.angle_tolerance = 0.05
+        self.position_tolerance = 0.05
 
         # robot information
         self.delta_t = DELTA_T_ms / 1000
@@ -83,19 +85,39 @@ class My_Robot:
         self.sendVelocity(u, w)
         return False
         
-        # phi_d = np.arctan2(y_err,x_err)
-        # phi_err = phi_d - self.odometry_position[2]
-        # phi_err = np.arctan2(np.sin(phi_err),np.cos(phi_err))
+    def rotateTo(self, target_angle):
         
-        # if dist_err > 0.01:
-        #     new_u = self.linear_controller.update(dist_err)
-        #     new_w = self.angular_controller.update(phi_err)
-        #     [wl, wr] = self._calc_wheels_speed_to(new_u, new_w)
-        # else:
-        #     self.index = self.index + 1
 
-        # self.left_motor.setVelocity(wl)
-        # self.right_motor.setVelocity(wr)
+        current_angle = self.odometry_position[2]
+        angle_diff = target_angle - current_angle
+        angle_diff = (angle_diff + math.pi) % (2 * math.pi) - math.pi
+
+        if abs(angle_diff) < self.angle_tolerance:
+            self.sendVelocity(0, 0)
+            return True
+
+        angle_velocity = self.angular_controller.update(angle_diff)
+        self.sendVelocity(0, angle_velocity)
+        return False
+            
+    def moveTo(self, target):
+        wl = 0
+        wr = 0
+        x_err = target[0] - self.odometry_position[0]
+        y_err = target[1] - self.odometry_position[1]
+        dist_err = math.sqrt(x_err**2 + y_err**2)
+        
+        phi_d = math.arctan2(y_err,x_err)
+        phi_err = phi_d - self.odometry_position[2]
+        phi_err = math.arctan2(math.sin(phi_err), math.cos(phi_err))
+        
+        if dist_err > self.position_tolerance or phi_err > self.angle_tolerance:
+            new_u = self.linear_controller.update(dist_err)
+            new_w = self.angular_controller.update(phi_err)
+            self.sendVelocity(new_u, new_w)
+        else:
+            return True
+        return False
 
     def sendVelocity(self, u, w):
         wr, wl = self._calc_wheels_speed_to(u, w)
