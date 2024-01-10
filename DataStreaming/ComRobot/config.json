@@ -35,18 +35,18 @@
       "EditRobotVLabel_Text" : "V",
       "EditRobotVnLabel_Text" : "Vn",
       "EditRobotWLabel_Text" : "ω",
-      "EditSheetFilename_Text" : "MeArm.xml",
+      "EditSheetFilename_Text" : "sheet.xml",
       "EditSolenoidChannel_Text" : "sl",
       "EditSolenoidLabel_Text" : "Sol.",
       "EditSolenoidMax_Text" : "170",
       "EditVmax_Text" : "0.1",
       "EditVnmax_Text" : "0.1",
       "EditWmax_Text" : "0.5",
-      "FMain_Left" : "676",
+      "FMain_Left" : "-8",
       "ShapeScriptState_Shape" : "stTriangleRight",
       "SplitterTerminals_Left" : "392",
       "TabConfig_PageIndex" : "1",
-      "FMain_Top" : "0",
+      "FMain_Top" : "-8",
       "PairSplitter_Position" : "776"
     }
   }
