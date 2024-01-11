@@ -33,54 +33,6 @@ class Graph:
             'N20': {'N19': 'left', 'B3': 'down', 'N21': 'right'},
             'N21': {'N15': 'up'  , 'B4': 'down', 'N20': 'left'},
         }
-        
-        self.lixo = {
-            ('A1', 'up', 'down'): ['goLeft'],
-            ('A1', 'down', 'up'): ['goLeft'],
-            ('A2', 'up', 'down'): ['goLeft'],
-            ('A2', 'down', 'up'): ['goLeft'],
-            ('A3', 'up', 'down'): ['goLeft'],
-            ('A3', 'down', 'up'): ['goLeft'],
-            ('A4', 'up', 'down'): ['goLeft'],
-            ('A4', 'down', 'up'): ['goLeft'],
-            
-            ('B1', 'up', 'down'): ['goLeft'],
-            ('B1', 'down', 'up'): ['goLeft'],
-            ('B2', 'up', 'down'): ['goLeft'],
-            ('B2', 'down', 'up'): ['goLeft'],
-            ('B3', 'up', 'down'): ['goLeft'],
-            ('B3', 'down', 'up'): ['goLeft'],
-            ('B4', 'up', 'down'): ['goLeft'],
-            ('B4', 'down', 'up'): ['goLeft'],
-            
-            ('N1', 'up', 'down'): ['goLeft'],
-            ('N1', 'up', 'right'): ['goRight'],
-            
-            
-            ('N1', 'left', 'down'): ['goLeft'],
-            ('N1', 'right', 'up'): ['goRight'],
-            
-            'N1': {'A1': 'up', 'N2': 'right', 'N7': 'down'},
-            
-            
-            'N2': {'A2': 'up', 'N3': 'right', 'N1': 'left'},
-            'N3': {'A3': 'up', 'N4': 'right', 'N2': 'left'},
-            'N4': {'A4': 'up', 'N5': 'right', 'N3': 'left'},
-            'N5': {'N4': 'left', 'N6': 'right', 'N8': 'down'},
-            'N6': {'N5': 'left', 'N9': 'down'},
-            'N7': {'N1': 'up', 'N8': 'right', 'N10': 'down'},
-            'N8': {'N7': 'left', 'N5': 'up', 'N9': 'right', 'N11': 'down'},
-            'N9': {'N6': 'up', 'N8': 'left', 'N12': 'down'},
-            'N10': {'N7': 'up', 'N11': 'right', 'N13': 'down'},
-            'N11': {'N8': 'up', 'N10': 'left', 'N12': 'right', 'N14': 'down'},
-            'N12': {'N9': 'up', 'N11': 'left', 'N18': 'down'},
-            'N13': {'N10': 'up', 'N14': 'right'},
-            'N14': {'N11': 'up', 'N13': 'left', 'N15': 'right'},
-            'N15': {'N14': 'left', 'B1': 'down', 'N16': 'right'},
-            'N16': {'N15': 'left', 'B2': 'down', 'N17': 'right'},
-            'N17': {'N16': 'left', 'B3': 'down', 'N18': 'right'},
-            'N18': {'N17': 'left', 'B4': 'down', 'N12': 'up'},
-        }
 
     def path_BFS(self, start, goal):
         # Check if both start and goal nodes exist in the graph
@@ -115,7 +67,7 @@ class Graph:
         else:
             return None
 
-    def get_commands(self, start, end, initial_orientation):
+    def get_commands(self, start, end, initial_orientation, final_orientation):
         path = self.path_BFS(start, end)
         if not path:
             return ["Caminho não encontrado"]
@@ -168,6 +120,20 @@ class Graph:
                 
                 current_position = step
                 current_orientation = step_orientation
+        
+        if(final_orientation == current_orientation):
+            return commands
+        else:
+            rotation_action = direction_to_command.get((current_orientation, final_orientation))
+            new = self.get_new_orientation(current_position, current_orientation, rotation_action)
+            
+            if(new == final_orientation):
+                commands.append('goFront')
+                commands.append(rotation_action)
+            else:
+                commands.append('goFront')
+                commands.append(rotation_action)
+                commands.append(rotation_action)
 
         return commands
     
@@ -198,5 +164,5 @@ class Graph:
         return str(self.graph)
 
 graph_instance = Graph()
-commands = graph_instance.get_commands('B4', 'N3', 'up')
+commands = graph_instance.get_commands('B4', 'N3', 'up', 'up')
 print(commands)

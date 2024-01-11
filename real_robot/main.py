@@ -6,6 +6,7 @@
 # You can modify and build on this code to complete your assignment.
 
 from machine import Pin, PWM, UART, ADC, Timer
+from files.path_planning import Graph
 from files.rotary_irq_esp import RotaryIRQ
 from files.WiFiInterface import WiFiInterface
 from files.robot import My_Robot
@@ -89,9 +90,17 @@ solenoid.duty(0)	# Turn off magnet solenoid
 
 #####################################################
 
+path_planning = Graph()
 my_robot = My_Robot(analog_pins, left_motor, right_motor, encoders, touchsw, solenoid)
 #wifi_interface = WiFiInterface(wifi_ssid, wifi_password, server_ip, server_port)
 #wifi_interface.run()
+
+commands = []
+for vl in path_planning.get_commands("B4", "N3", "up", "up"):
+    commands.append(vl)
+for vl in path_planning.get_commands("N3", "B2", "up", "down"):
+    commands.append(vl)
+
 
 #for i in range(6000):
 #    x = "A1 " + str(analog_read.read()) +";A2 100;loop 1;"
@@ -100,45 +109,6 @@ my_robot = My_Robot(analog_pins, left_motor, right_motor, encoders, touchsw, sol
 #    if data != None:
 #        print("Dados Recebidos:", data)
 #    time.sleep_ms(100)
-
-
-
-    
-commands = [
-    ("followLine", None),
-    ("followLine", None),
-    ("followLine", None),
-    ("followLine", None),
-    ("followLine", None),
-    ("goFront", None),
-    ("goLeft", None),
-    ("followLine", None),
-    ("followLine", None),
-    ("followLine", None),
-    ("goFront", None),
-    ("goRight", None),
-    
-    #("take", None),
-    
-    ("goLeft", None),
-    ("goLeft", None),
-    ("followLine", None),
-    ("followLine", None),
-    ("goFront", None),
-    ("goRight", None),
-    ("followLine", None),
-    ("followLine", None),
-    ("followLine", None),
-    ("followLine", None),
-    ("goFront", None),
-    ("goLeft", None),
-    ("followLine", None),
-    ("goFront", None),
-    ("goRight", None),
-    ("leave", None),
-]
-
-
    
 #######################################################
 
@@ -223,7 +193,6 @@ def run_command():
     return False
 
 #######################################################
-
 
 #print("Click the switch to start.")
 #while touchsw.value() == True:

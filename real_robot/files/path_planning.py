@@ -67,7 +67,7 @@ class Graph:
         else:
             return None
 
-    def get_commands(self, start, end, initial_orientation):
+    def get_commands(self, start, end, initial_orientation, final_orientation):
         path = self.path_BFS(start, end)
         if not path:
             return ["Caminho não encontrado"]
@@ -120,6 +120,20 @@ class Graph:
                 
                 current_position = step
                 current_orientation = step_orientation
+        
+        if(final_orientation == current_orientation):
+            return commands
+        else:
+            rotation_action = direction_to_command.get((current_orientation, final_orientation))
+            new = self.get_new_orientation(current_position, current_orientation, rotation_action)
+            
+            if(new == final_orientation):
+                commands.append('goFront')
+                commands.append(rotation_action)
+            else:
+                commands.append('goFront')
+                commands.append(rotation_action)
+                commands.append(rotation_action)
 
         return commands
     
@@ -148,3 +162,7 @@ class Graph:
     
     def __str__(self):
         return str(self.graph)
+
+graph_instance = Graph()
+commands = graph_instance.get_commands('B4', 'N3', 'up', 'up')
+print(commands)
