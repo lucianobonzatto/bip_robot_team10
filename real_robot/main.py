@@ -48,6 +48,7 @@ right_motor = DCMotor(right_p, right_n, enable_r, 0, 1023)
 
 left_motor.stop()
 right_motor.stop()
+
 #######################################################
 
 ## encoder driver
@@ -86,7 +87,7 @@ analog_pins = [IR1_pin, IR2_pin, IR3_pin, IR4_pin, IR5_pin]
 solenoid = PWM(Pin(SOLENOID_PIN), frequency)	# define PWM for solenoid pin
 solenoid.duty(0)	# Turn off magnet solenoid
 
-#######################################################
+#####################################################
 
 my_robot = My_Robot(analog_pins, left_motor, right_motor, encoders, touchsw, solenoid)
 #wifi_interface = WiFiInterface(wifi_ssid, wifi_password, server_ip, server_port)
@@ -100,13 +101,44 @@ my_robot = My_Robot(analog_pins, left_motor, right_motor, encoders, touchsw, sol
 #        print("Dados Recebidos:", data)
 #    time.sleep_ms(100)
 
+
+
+    
 commands = [
     ("followLine", None),
-    ("moveTo", [1, 0, 0]),
-    ("rotateTo", math.pi / 2),
-    ("moveToRelative", [0.1, 0, 0]),
-    ("rotateToRelative", math.pi / 4),
+    ("followLine", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("goFront", None),
+    ("goLeft", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("goFront", None),
+    ("goRight", None),
+    
+    #("take", None),
+    
+    ("goLeft", None),
+    ("goLeft", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("goFront", None),
+    ("goRight", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("goFront", None),
+    ("goLeft", None),
+    ("followLine", None),
+    ("goFront", None),
+    ("goRight", None),
+    ("leave", None),
 ]
+
+
    
 #######################################################
 
@@ -118,13 +150,37 @@ def run_command():
     if (index >= len(commands)):
         return True
     
+    print(index)
+    
     action, params = commands[index]
 
     if action == "followLine":
         return_value = my_robot.followLine()
         if return_value:
             index = index + 1
-
+            
+    if action == "goFront":
+        return_value = my_robot.goFront()
+        if return_value:
+            index = index + 1
+    if action == "goLeft":
+        my_robot.sendVelocity(0, -8)
+        return_value = my_robot.goLeft()
+        if return_value:
+            index = index + 1
+    if action == "goRight":
+        my_robot.sendVelocity(0, 8)
+        return_value = my_robot.goRight()
+        if return_value:
+            index = index + 1
+    if action == "take":
+        return_value = my_robot.take()
+        if return_value:
+            index = index + 1
+    if action == "leave":
+        my_robot.writeSolenoid(False)
+        index = index + 1
+            
     elif action == "moveTo":
         return_value = my_robot.moveTo(params)
         if return_value:
@@ -190,20 +246,17 @@ while True:
     data = data + "A1 " + str(cycle_count) + ";loop 1;"
     #wifi_interface.send_data(data.encode())
     
-    line_sensor_values = my_robot.readIRSensors()
-    touch_sw_value = my_robot.readSwitch()
-    my_robot.writeSolenoid(True)
-    print(touch_sw_value)
-    print(line_sensor_values)
-    print(data)
-    
+    # my_robot.sendVelocity(0.5, 0)
+    # my_robot.followLine()
     # my_robot.test_motors()
     # my_robot.follow_line()
     # my_robot.moveTo([1,0,0])
     # my_robot.rotateTo(math.pi / 2)
     if run_command():
-        break
+       break
     
-    
+my_robot.writeSolenoid(False)
+my_robot.sendVelocity(0, 0)
 print("Stop")
     
+

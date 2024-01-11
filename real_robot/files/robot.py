@@ -30,11 +30,15 @@ class My_Robot:
         self.pulses_per_turn = PULSES_PER_TURN
 
         # controllers
-        self.linear_controller = PID(0.1, 0.01, 0.01, self.delta_t, 0.12)
-        self.angular_controller = PID(0.1, 0.01, 0.01, self.delta_t, 0.01)
+        self.linear_controller = PID(100, 0.0, 0.0, self.delta_t, 0.12)
+        self.angular_controller = PID(10, 0.0, 0.0, self.delta_t, 0.01)
 
         self.goto = [[0.1, 0.0], [0.1, 0.1]]
         self.index = 0
+        self.line_flag = 0
+        self.front_flag = 0
+        self.left_flag = 0
+        self.right_flag = 0
 
     def update(self):
         # read sensors
@@ -54,20 +58,120 @@ class My_Robot:
         # print(self.old_encoders_values[0], self.old_encoders_values[1])
         # print(encoderValues[0], encoderValues[1])
         return data
+    
+    def goFront(self):
+        
+        base_speed = 0.2
+        if self.readSolenoid():
+            base_speed = 0.3
+            
+        self.sendVelocity(base_speed, 0)
+        self.front_flag = self.front_flag + 1
+        
+        if(self.front_flag > 27):
+            self.sendVelocity(0, 0)
+            self.front_flag = 0
+            return True
+        
+        self.sendVelocity(base_speed, 0)
+        return False
+    
+    def take(self):
+        base_speed = 0.2
+        self.sendVelocity(base_speed, 0)
+        
+        if(self.readSwitch()):
+            self.sendVelocity(0, 0)
+            self.writeSolenoid(True)
+            return True
+        
+        self.sendVelocity(base_speed, 0)
+        return False
+    
+    def goLeft(self):
+        line_sensor_values = self.readIRSensors()
+        gs_left = line_sensor_values[2]
+        self.left_flag = self.left_flag + 1
+        
+        turn_speed = 8
+        if self.readSolenoid():
+            turn_speed = 15
+        
+        print("self.left_flag", self.left_flag)
+        
+        if(self.left_flag > 10):
+            if(gs_left > LINE_THRESHOLD):
+                self.sendVelocity(0, 0)
+                self.left_flag = 0
+                return True
+        
+        self.sendVelocity(0, -turn_speed)
+        return False
+    
+    def goRight(self):
+        line_sensor_values = self.readIRSensors()
+        gs_left = line_sensor_values[2]
+        self.right_flag = self.right_flag + 1
+        
+        turn_speed = 8
+        if self.readSolenoid():
+            turn_speed = 15
+        
+        if(self.right_flag > 10):
+            if(gs_left > LINE_THRESHOLD):
+                self.sendVelocity(0, 0)
+                self.right_flag = 0
+                return True
+        
+        self.sendVelocity(0, turn_speed)
+        return False
         
     def followLine(self):
         line_sensor_values = self.readIRSensors()
         gs_extreme_left = line_sensor_values[0]
-        gs_right = line_sensor_values[1].getValue()
-        gs_center = line_sensor_values[2].getValue()
-        gs_left = line_sensor_values[3].getValue()
+        gs_right = line_sensor_values[1]
+        gs_center = line_sensor_values[2]
+        gs_left = line_sensor_values[3]
         gs_extreme_right = line_sensor_values[4]
         
-        base_speed = 0.5
-        turn_speed = 0.2
+        print(line_sensor_values)
         
-        if(gs_extreme_left > LINE_THRESHOLD and gs_extreme_right > LINE_THRESHOLD):
-            return True
+        base_speed = 0.2
+        turn_speed = 8
+        
+        if self.readSolenoid():
+            turn_speed = 13
+            base_speed = 0.25
+        '''
+        
+        if(gs_extreme_left > LINE_THRESHOLD or gs_extreme_right > LINE_THRESHOLD):
+            print("***")
+            if self.line_flag > 3:
+                self.sendVelocity(0, 0)
+                self.line_flag = 0
+                return True
+            else:
+                u = base_speed
+                self.sendVelocity(base_speed, 0)
+                self.line_flag = self.line_flag + 1
+                return False
+        '''
+        print("line_flag: ", self.line_flag)
+        
+        if self.line_flag == 0:
+            if(gs_extreme_left > LINE_THRESHOLD or gs_extreme_right > LINE_THRESHOLD):
+                self.line_flag = 1
+                self.sendVelocity(base_speed, 0)
+                return False
+        else:
+            if(gs_extreme_left < LINE_THRESHOLD and gs_extreme_right < LINE_THRESHOLD):
+                self.sendVelocity(base_speed, 0)
+                self.line_flag = 0
+                return True
+            self.sendVelocity(base_speed, 0)
+            return False
+                
+            
         
         if gs_center > LINE_THRESHOLD:
             u = base_speed
@@ -81,13 +185,12 @@ class My_Robot:
         else:
             u = 0
             w = 0
+            return False
             
         self.sendVelocity(u, w)
         return False
         
     def rotateTo(self, target_angle):
-        
-
         current_angle = self.odometry_position[2]
         angle_diff = target_angle - current_angle
         angle_diff = (angle_diff + math.pi) % (2 * math.pi) - math.pi
@@ -107,12 +210,12 @@ class My_Robot:
         y_err = target[1] - self.odometry_position[1]
         dist_err = math.sqrt(x_err**2 + y_err**2)
         
-        phi_d = math.arctan2(y_err,x_err)
+        phi_d = math.atan2(y_err,x_err)
         phi_err = phi_d - self.odometry_position[2]
-        phi_err = math.arctan2(math.sin(phi_err), math.cos(phi_err))
+        phi_err = math.atan2(math.sin(phi_err), math.cos(phi_err))
         
         if dist_err > self.position_tolerance or phi_err > self.angle_tolerance:
-            new_u = self.linear_controller.update(dist_err)
+            new_u = dist_err*150 #self.linear_controller.update(dist_err)
             new_w = self.angular_controller.update(phi_err)
             self.sendVelocity(new_u, new_w)
         else:
@@ -121,20 +224,20 @@ class My_Robot:
 
     def sendVelocity(self, u, w):
         wr, wl = self._calc_wheels_speed_to(u, w)
-        wr = self._convert_speed_to_pwm(wr)
-        wl = self._convert_speed_to_pwm(wl)
+        pwm_wr = self._convert_speed_to_pwm(abs(wr))
+        pwm_wl = self._convert_speed_to_pwm(abs(wl))
         
         if wl > 0:
-            self.left_motor.forward(abs(wl))
+            self.left_motor.forward(pwm_wl)
         elif wl < 0:
-            self.left_motor.backwards(abs(wl))
+            self.left_motor.backwards(pwm_wl)
         else:
             self.left_motor.stop()
             
         if wr > 0:
-            self.right_motor.forward(abs(wr))
+            self.right_motor.forward(pwm_wr)
         elif wr < 0:
-            self.right_motor.backwards(abs(wr))
+            self.right_motor.backwards(pwm_wr)
         else:
             self.right_motor.stop()
         
@@ -143,7 +246,7 @@ class My_Robot:
         Read the Switch state:
         pressed = True; unpressed = False
         '''
-        return not self.touchsw.value()
+        return self.touchsw.value()
 
     def readIRSensors(self):
         '''
@@ -161,7 +264,7 @@ class My_Robot:
     
     def writeSolenoid(self, state):
         if state == True:
-            self.solenoid.duty(255)	# Turn on magnet solenoid
+            self.solenoid.duty(1000)	# Turn on magnet solenoid
             self.solenoid_state = True
             
         elif state == False:
@@ -173,46 +276,47 @@ class My_Robot:
         Sequence of movements to test the motors at different speeds and directions.
         '''
         print("Left motor")
-        print(self.encoders[0].getValue(), self.encoders[1].getValue())
+        
+        print(self.encoders[0].value(), self.encoders[1].value())
         self.left_motor.forward(60)
         sleep(1)
         self.left_motor.stop()
-        print(self.encoders[0].getValue(), self.encoders[1].getValue())
+        print(self.encoders[0].value(), self.encoders[1].value())
 
         sleep(1)
-        print(self.encoders[0].getValue(), self.encoders[1].getValue())
+        print(self.encoders[0].value(), self.encoders[1].value())
         self.left_motor.backwards(90)
         sleep(1)
         self.left_motor.stop()
-        print(self.encoders[0].getValue(), self.encoders[1].getValue())
+        print(self.encoders[0].value(), self.encoders[1].value())
 
         sleep(2)
 
         print("Right motor")
-        print(self.encoders[0].getValue(), self.encoders[1].getValue())
+        print(self.encoders[0].value(), self.encoders[1].value())
         self.right_motor.forward(60)
         sleep(1)
         self.right_motor.stop()
-        print(self.encoders[0].getValue(), self.encoders[1].getValue())
+        print(self.encoders[0].value(), self.encoders[1].value())
 
         sleep(1)
-        print(self.encoders[0].getValue(), self.encoders[1].getValue())
+        print(self.encoders[0].value(), self.encoders[1].value())
         self.right_motor.backwards(90)
         sleep(1)
         self.right_motor.stop()
-        print(self.encoders[0].getValue(), self.encoders[1].getValue())
+        print(self.encoders[0].value(), self.encoders[1].value())
 
         sleep(2)
-        print(self.encoders[0].getValue(), self.encoders[1].getValue())
+        print(self.encoders[0].value(), self.encoders[1].value())
     
     def _update_position(self, encoderValues):
         wl, wr = self._cal_actual_wheels_speed(encoderValues)
-        # print(f'Left wheel speed  = {wl} rad/s.')
-        # print(f'Right wheel speed = {wr} rad/s.')
+        #print(f'Left wheel speed  = {wl} rad/s.')
+        #print(f'Right wheel speed = {wr} rad/s.')
 
         u, w = self._calc_actual_speeds(wl, wr)
-        # print(f"Robot linear speed  = {u} m/s")
-        # print(f"Robot angular speed = {w} rad/s")
+        #print(f"Robot linear speed  = {u} m/s")
+        #print(f"Robot angular speed = {w} rad/s")
 
         self._update_actual_odometry(u, w)
         # print(f"Robot pose is: {self.odometry_position[0]} m, {self.odometry_position[1]} m, {self.odometry_position[2]} rad.")
@@ -227,10 +331,6 @@ class My_Robot:
         return data
 
     def _cal_actual_wheels_speed(self, encoderValues):
-    #    wl = (encoderValues[0] - self.old_encoders_values[0])/self.delta_t
-    #    wr = (encoderValues[1] - self.old_encoders_values[1])/self.delta_t
-    #    return wl, wr
-    
         ## Calculate the change in angular position of the wheels:
         ang_diff_l = 2*math.pi*(encoderValues[0] - self.old_encoders_values[0])/self.pulses_per_turn
         ang_diff_r = 2*math.pi*(encoderValues[1] - self.old_encoders_values[1])/self.pulses_per_turn
@@ -266,10 +366,10 @@ class My_Robot:
         return wr, wl
 
     def _convert_speed_to_pwm(self, speed):
-        speed_min = -1
-        speed_max = 1
+        speed_min = -50
+        speed_max = 50
 
         limited_speed = max(speed_min, min(speed_max, speed))
 
-        pwm_value = int(((limited_speed - speed_min) / (speed_max - speed_min)) * 1023)
-        return max(0, min(1023, pwm_value))
+        pwm_value = int(((limited_speed - speed_min) / (speed_max - speed_min)) * 100)
+        return max(0, min(100, pwm_value))
