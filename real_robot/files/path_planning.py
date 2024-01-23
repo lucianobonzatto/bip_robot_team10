@@ -38,12 +38,12 @@ class Graph:
         # Check if both start and goal nodes exist in the graph
         if start not in self.graph or goal not in self.graph:
             return None
-
-        queue = deque([[start]])
+        
+        queue = [[start]]
         visited = set()
 
         while queue:
-            path = queue.popleft()
+            path = queue.pop(0)
             node = path[-1]
 
             if node == goal:
@@ -57,9 +57,18 @@ class Graph:
                     if adjacent not in visited:
                         new_path = list(path)
                         new_path.append(adjacent)
-                        queue.append(new_path)
+                        queue = queue + [new_path]
         
         return None
+    
+    def remove_connection(self, node1, node2):
+        if node1 in self.graph and node2 in self.graph:
+            if node2 in self.graph[node1]:
+                del self.graph[node1][node2]
+            if node1 in self.graph[node2]:
+                del self.graph[node2][node1]
+        else:
+            print("Um ou ambos os nós não estão no grafo.")
     
     def get_relative_position(self, start, end):
         if start in self.graph and end in self.graph[start]:
@@ -101,7 +110,7 @@ class Graph:
             step_orientation = self.get_relative_position(current_position, step)
             
             if(step_orientation == current_orientation):
-                commands.append('followLine')
+                commands.append(['followLine', current_position, step, current_orientation, step_orientation])
                 current_position = step
                 current_orientation = step_orientation
             else:
@@ -109,14 +118,14 @@ class Graph:
                 new = self.get_new_orientation(current_position, current_orientation, rotation_action)
                 
                 if(new == step_orientation):
-                    commands.append('goFront')
-                    commands.append(rotation_action)
-                    commands.append('followLine')
+                    commands.append(['goFront', current_position, step, current_orientation, step_orientation])
+                    commands.append([rotation_action, current_position, step, current_orientation, step_orientation])
+                    commands.append(['followLine', current_position, step, current_orientation, step_orientation])
                 else:
-                    commands.append('goFront')
-                    commands.append(rotation_action)
-                    commands.append(rotation_action)
-                    commands.append('followLine')
+                    commands.append(['goFront', current_position, step, current_orientation, step_orientation])
+                    commands.append([rotation_action, current_position, step, current_orientation, step_orientation])
+                    commands.append([rotation_action, current_position, step, current_orientation, step_orientation])
+                    commands.append(['followLine', current_position, step, current_orientation, step_orientation])
                 
                 current_position = step
                 current_orientation = step_orientation
@@ -128,12 +137,12 @@ class Graph:
             new = self.get_new_orientation(current_position, current_orientation, rotation_action)
             
             if(new == final_orientation):
-                commands.append('goFront')
-                commands.append(rotation_action)
+                commands.append(['goFront', current_position, step, current_orientation, step_orientation])
+                commands.append([rotation_action, current_position, step, current_orientation, step_orientation])
             else:
-                commands.append('goFront')
-                commands.append(rotation_action)
-                commands.append(rotation_action)
+                commands.append(['goFront', current_position, step, current_orientation, step_orientation])
+                commands.append([rotation_action, current_position, step, current_orientation, step_orientation])
+                commands.append([rotation_action, current_position, step, current_orientation, step_orientation])
 
         return commands
     
@@ -163,6 +172,3 @@ class Graph:
     def __str__(self):
         return str(self.graph)
 
-graph_instance = Graph()
-commands = graph_instance.get_commands('B4', 'N3', 'up', 'up')
-print(commands)

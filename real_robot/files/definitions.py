@@ -1,21 +1,21 @@
 # This file contains definitions of pins and constants used in your code
-BOARD_LED = 2    # ESP32 onboard LED
 
 # Encoders: supply GND and 3V3
 ENC1_A = 27  # green  Right motor encoder
 ENC1_B = 14  # blue 
 ENC2_A = 19  # green  Left motor encoder
 ENC2_B = 23  # blue
-PULSES_PER_TURN = 96  # Number of encoder pulses per revolution of the wheel
-
+PULSES_PER_TURN = 779  # Number of encoder pulses per revolution of the wheel
+ULTRA_ECHO = 15
+ULTRA_TRIG = 2
 # MOTOR DRIVER: supply to GND and Vin
 
 EN_LEFT = 26         # A-1A  Left enable
 POSITIVE_LEFT = 17   # B-1B  Left Motor -
-NEGATIVE_LEFT = 16   # B-1A  Left Motor +
+NEGATIVE_LEFT = 5   # B-1A  Left Motor +
 
 EN_RIGHT = 25         # A-1B  Right enable
-POSITIVE_RIGHT = 2   # B-1B  Right Motor -
+POSITIVE_RIGHT = 16   # B-1B  Right Motor -
 NEGATIVE_RIGHT = 4   # B-1A  Right Motor +
 
 SOLENOID_PIN = 13  # connect to Magnet board (supply the board with GND and +5V)
@@ -29,7 +29,7 @@ IR3 = 39    # Orange IR3 IO39
 IR4 = 36    # Green  IR4 IO36
 IR5 = 34    # White  IR5 IO34
 
-LINE_THRESHOLD = 100
+LINE_THRESHOLD = 900
 
 # Network credentials - Replace by the correct ones!
 wifi_ssid = "Vodafone-D25918"

@@ -63,12 +63,12 @@ class My_Robot:
         
         base_speed = 0.2
         if self.readSolenoid():
-            base_speed = 0.3
+            base_speed = 0.2
             
         self.sendVelocity(base_speed, 0)
         self.front_flag = self.front_flag + 1
         
-        if(self.front_flag > 27):
+        if(self.front_flag > 20):
             self.sendVelocity(0, 0)
             self.front_flag = 0
             return True
@@ -93,13 +93,13 @@ class My_Robot:
         gs_left = line_sensor_values[2]
         self.left_flag = self.left_flag + 1
         
-        turn_speed = 8
+        turn_speed = 5
         if self.readSolenoid():
-            turn_speed = 15
+            turn_speed = 9
         
         print("self.left_flag", self.left_flag)
         
-        if(self.left_flag > 10):
+        if(self.left_flag > 20):
             if(gs_left > LINE_THRESHOLD):
                 self.sendVelocity(0, 0)
                 self.left_flag = 0
@@ -113,11 +113,11 @@ class My_Robot:
         gs_left = line_sensor_values[2]
         self.right_flag = self.right_flag + 1
         
-        turn_speed = 8
+        turn_speed = 5
         if self.readSolenoid():
-            turn_speed = 15
+            turn_speed = 9
         
-        if(self.right_flag > 10):
+        if(self.right_flag > 20):
             if(gs_left > LINE_THRESHOLD):
                 self.sendVelocity(0, 0)
                 self.right_flag = 0
@@ -137,38 +137,24 @@ class My_Robot:
         print(line_sensor_values)
         
         base_speed = 0.2
-        turn_speed = 8
+        turn_speed = 4
         
         if self.readSolenoid():
-            turn_speed = 13
-            base_speed = 0.25
-        '''
-        
-        if(gs_extreme_left > LINE_THRESHOLD or gs_extreme_right > LINE_THRESHOLD):
-            print("***")
-            if self.line_flag > 3:
-                self.sendVelocity(0, 0)
-                self.line_flag = 0
-                return True
-            else:
-                u = base_speed
-                self.sendVelocity(base_speed, 0)
-                self.line_flag = self.line_flag + 1
-                return False
-        '''
+            turn_speed = 3
+            base_speed = 0.3
         print("line_flag: ", self.line_flag)
         
         if self.line_flag == 0:
             if(gs_extreme_left > LINE_THRESHOLD or gs_extreme_right > LINE_THRESHOLD):
                 self.line_flag = 1
-                self.sendVelocity(base_speed, 0)
+                self.sendVelocity(base_speed, turn_speed)
                 return False
         else:
             if(gs_extreme_left < LINE_THRESHOLD and gs_extreme_right < LINE_THRESHOLD):
-                self.sendVelocity(base_speed, 0)
+                self.sendVelocity(base_speed + 0.1, turn_speed)
                 self.line_flag = 0
                 return True
-            self.sendVelocity(base_speed, 0)
+            self.sendVelocity(base_speed, turn_speed)
             return False
                 
             

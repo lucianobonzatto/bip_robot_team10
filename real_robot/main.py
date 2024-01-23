@@ -11,12 +11,13 @@ from files.rotary_irq_esp import RotaryIRQ
 from files.WiFiInterface import WiFiInterface
 from files.robot import My_Robot
 from files.definitions import *
+from files.hcsr04 import HCSR04
 import time
 import math
 
 frequency = 15000  # PWM frequency
 # uart = UART(2, baudrate=115200, tx=TX, rx=RX)
-led_board = Pin(BOARD_LED, Pin.OUT)				# Define ESP32 onboard LED
+
 cycle_count = 0
 delta_t = DELTA_T_ms / 1000
 
@@ -87,20 +88,14 @@ analog_pins = [IR1_pin, IR2_pin, IR3_pin, IR4_pin, IR5_pin]
 ## solenoid driver
 solenoid = PWM(Pin(SOLENOID_PIN), frequency)	# define PWM for solenoid pin
 solenoid.duty(0)	# Turn off magnet solenoid
+ultrasensor = HCSR04(trigger_pin = ULTRA_TRIG, echo_pin = ULTRA_ECHO) 
 
 #####################################################
 
-path_planning = Graph()
 my_robot = My_Robot(analog_pins, left_motor, right_motor, encoders, touchsw, solenoid)
+path_planning = Graph()
 #wifi_interface = WiFiInterface(wifi_ssid, wifi_password, server_ip, server_port)
 #wifi_interface.run()
-
-commands = []
-for vl in path_planning.get_commands("B4", "N3", "up", "up"):
-    commands.append(vl)
-for vl in path_planning.get_commands("N3", "B2", "up", "down"):
-    commands.append(vl)
-
 
 #for i in range(6000):
 #    x = "A1 " + str(analog_read.read()) +";A2 100;loop 1;"
@@ -109,21 +104,106 @@ for vl in path_planning.get_commands("N3", "B2", "up", "down"):
 #    if data != None:
 #        print("Dados Recebidos:", data)
 #    time.sleep_ms(100)
+
+
+v1 = [
+    ("followLine", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("goFront", None),
+    ("goLeft", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("goFront", None),
+    ("goRight", None),
+    
+    ("take", None),
+    
+    ("goLeft", None),
+    ("goLeft", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("goFront", None),
+    ("goRight", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("goFront", None),
+    ("goLeft", None),
+    ("followLine", None),
+    ("goFront", None),
+    ("goRight", None),
+    ("goFront", None),
+    ("leave", None),
+]
+
+v2 = [
+    ("followLine", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("goFront", None),
+    ("goLeft", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("goFront", None),
+    ("goRight", None),
+    
+    ("take", None),
+    
+    ("goLeft", None),
+    ("goLeft", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("goFront", None),
+    ("goRight", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("goFront", None),
+    ("goRight", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("followLine", None),
+    ("goFront", None),
+    ("goLeft", None),
+    ("goFront", None),
+    ("leave", None),
+]
+
+commands = v2
+commands = []
+for cm in path_planning.get_commands("B4", "N3", "up", "up"):
+    commands.append(cm)
+    
+commands.append(['take', "N3", "N3", "up", "up"])
+
+
    
 #######################################################
 
 def run_command():
-    global index
+    global index, commands
     global move_to_relative_initialized, move_to_relative_target
     global rotate_to_relative_initialized, rotate_to_relative_target
     
     if (index >= len(commands)):
         return True
     
-    print(index)
+    #action, params = commands[index]
+    params = []
+    action, p1, p2, r1, r2 = commands[index]
+    position_robot = [p1, r1]
+    print(index, commands[index])
     
-    action, params = commands[index]
-
     if action == "followLine":
         return_value = my_robot.followLine()
         if return_value:
@@ -134,19 +214,36 @@ def run_command():
         if return_value:
             index = index + 1
     if action == "goLeft":
-        my_robot.sendVelocity(0, -8)
+        #my_robot.sendVelocity(0, -8)
         return_value = my_robot.goLeft()
         if return_value:
             index = index + 1
     if action == "goRight":
-        my_robot.sendVelocity(0, 8)
+        #my_robot.sendVelocity(0, 8)
         return_value = my_robot.goRight()
         if return_value:
             index = index + 1
     if action == "take":
-        return_value = my_robot.take()
-        if return_value:
-            index = index + 1
+        #return_value = my_robot.take()
+        return_value = my_robot.followLine()
+        
+        if(my_robot.readSwitch()):
+            my_robot.sendVelocity(0, 0)
+            my_robot.writeSolenoid(True)
+            
+            teste = []
+            teste.append(['goLeft', "N3", "N3", "up", "down"])
+            teste.append(['followLine', "N3", "N3", "down", "down"])
+
+            for cm in path_planning.get_commands("N3", "N18", "down", "down"):
+                teste.append(cm)
+                
+            teste.append(['goFront', "N18", "N18", "down", "down"])
+            teste.append(['leave', "N18", "N18", "down", "down"])
+            commands = teste
+            print(commands)
+            
+            index = 0
     if action == "leave":
         my_robot.writeSolenoid(False)
         index = index + 1
@@ -194,6 +291,7 @@ def run_command():
 
 #######################################################
 
+
 #print("Click the switch to start.")
 #while touchsw.value() == True:
 #    # Switch value is False when clicked
@@ -206,11 +304,14 @@ move_to_relative_initialized = False
 move_to_relative_target = [0, 0, 0]
 rotate_to_relative_initialized = False
 rotate_to_relative_target = 0
+position_robot = ["B4", "up"]
 
+print(commands)
 while True:
     time.sleep(delta_t)
+    
     cycle_count += 1
-    led_board.value(not led_board.value())
+   
     data = my_robot.update()
     data = data + "A1 " + str(cycle_count) + ";loop 1;"
     #wifi_interface.send_data(data.encode())
@@ -221,6 +322,9 @@ while True:
     # my_robot.follow_line()
     # my_robot.moveTo([1,0,0])
     # my_robot.rotateTo(math.pi / 2)
+    # if(ultrasensor.distance_cm() < 10):
+    #    print(ultrasensor.distance_cm())
+    
     if run_command():
        break
     
