@@ -32,8 +32,8 @@ IR5 = 34    # White  IR5 IO34
 LINE_THRESHOLD = 900
 
 # Network credentials - Replace by the correct ones!
-wifi_ssid = "Vodafone-D25918"
-wifi_password = "s98S4c8kqn"
+wifi_ssid = "wifi_ssid"
+wifi_password = "wifi_password"
 server_ip = "192.168.1.134"
 server_port = 4224
 
